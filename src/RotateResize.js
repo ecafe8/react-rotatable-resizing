@@ -1,6 +1,5 @@
 import React from 'react'
-import Victor from 'victor'
-class App extends React.Component{
+class RotateResize extends React.Component{
   constructor(props){
     super(props)
     this.state = {
@@ -17,10 +16,7 @@ class App extends React.Component{
       rDirection:'',
       step: 1,
       rotation:0,
-      center:{},
-      rotatedPointBottomLeft:{},
-      rotatedPointBottomRight:{},
-      rotatedPointTopRight:{}
+      center:{}
     }
   }
 
@@ -213,20 +209,28 @@ class App extends React.Component{
   }
 
   resizeESES = (canWidthChange,canHeightChange,e) => {
-    const {deg,rotation,direction,top,left,width,height,center} = this.state
+    const {direction,top,left,width,height} = this.state
+    let {deg} = this.state
     const distanceX = e.clientX - this.state.originalX
     const distanceY = e.clientY - this.state.originalY
-    let vec1 = new Victor(0,distanceY)
-    let vec2 = new Victor(distanceX,0)
-    const delta = (deg+rotation) * Math.PI/180
+    // const delta = (deg) * Math.PI/180
     // console.log(Math.sin(delta),Math.cos(delta))
     const initialBoxWidth = this.state.width
     const initialBoxHeight = this.state.height
     let newHeight
     let newWidth
+    if (deg > 360){
+      deg = deg - parseInt(deg / 360) * 360
+    }
+    if (deg > 270 || ( Math.abs(deg-270) < 30  &&  deg > 0)){
+      deg = deg -360
+    }
+    if ( deg < -270 || ( Math.abs(deg+270) < 30  &&  deg < 0) ) {
+      deg = deg + 360
+    }
     if (deg >= 90 || (Math.abs(deg - 90) < 30 && deg > 0 ) ){
       if (Math.abs(deg - 90) < 30){
-        if (direction == 's') {
+        if (direction === 's') {
           newHeight = initialBoxHeight - distanceX
           newWidth = initialBoxWidth - distanceY
         }else{
@@ -240,7 +244,7 @@ class App extends React.Component{
       }
     }else if (deg <= -90 || (Math.abs(deg + 90) < 30 && deg < 0 ) ){
       if (Math.abs(deg + 90) < 30){
-        if (direction == 's') {
+        if (direction === 's') {
           newHeight = initialBoxHeight + distanceX
           newWidth = initialBoxWidth + distanceY
         }else{
@@ -260,13 +264,13 @@ class App extends React.Component{
 
     newHeight = canHeightChange ? newHeight : initialBoxHeight
     newWidth = canWidthChange ? newWidth : initialBoxWidth
-    if (direction == 's'){
-      const rotatedPointTopLeft = this.rotatePoint(top, left,width, height, deg+rotation, 'top-left')
+    if (direction === 's'){
+      const rotatedPointTopLeft = this.rotatePoint(top, left,width, height, deg, 'top-left')
       const newPos = this.newPositionAfterResize(
         rotatedPointTopLeft,
         newWidth,
         newHeight,
-        deg+rotation,
+        deg,
         'top-left'
       )
       // console.log(newPos)
@@ -279,12 +283,12 @@ class App extends React.Component{
         left: newPos.left ? newPos.left : left
       })
     }else{
-      const rotatedPointBottomLeft = this.rotatePoint(top, left,width, height, deg+rotation, 'bottom-left')
+      const rotatedPointBottomLeft = this.rotatePoint(top, left,width, height, deg, 'bottom-left')
       const newPos = this.newPositionAfterResize(
         rotatedPointBottomLeft,
         newWidth,
         newHeight,
-        deg+rotation,
+        deg,
         'bottom-left'
       )
       // console.log(newPos)
@@ -305,14 +309,24 @@ class App extends React.Component{
     const distanceY = this.state.originalY - e.clientY
     const initialBoxWidth = this.state.width
     const initialBoxHeight = this.state.height
-    const { top, left , deg, rotation,width,height,direction} = this.state
+    const { top, left ,width,height,direction} = this.state
+    let {deg} = this.state
     const endTop = canHeightChange ? top - distanceY : top
     const endLeft = canWidthChange ? left - distanceX : left
     let newHeight
     let newWidth
+    if (deg > 360){
+      deg = deg - parseInt(deg / 360) * 360
+    }
+    if (deg > 270 || ( Math.abs(deg-270) < 30  &&  deg > 0)){
+      deg = deg -360
+    }
+    if ( deg < -270 || ( Math.abs(deg+270) < 30  &&  deg < 0) ) {
+      deg = deg + 360
+    }
     if (deg >= 90 || (Math.abs(deg - 90) < 30 && deg > 0 )){
       if (Math.abs(deg - 90) < 30){
-        if (direction == 'w'){
+        if (direction === 'w'){
           newHeight = initialBoxHeight + distanceX
           newWidth = initialBoxWidth + distanceY
         }else{
@@ -330,7 +344,7 @@ class App extends React.Component{
         newWidth = initialBoxWidth - distanceY
       }else if (deg <= -90 || (Math.abs(deg + 90) < 30 && deg < 0 )){
         if (Math.abs(deg + 90) < 30){
-          if (direction == 'w') {
+          if (direction === 'w') {
             newHeight = initialBoxHeight - distanceX
             newWidth = initialBoxWidth - distanceY
           }else{
@@ -350,13 +364,13 @@ class App extends React.Component{
     }
     newHeight = canHeightChange ? newHeight : initialBoxHeight
     newWidth = canWidthChange ? newWidth : initialBoxWidth
-    if(this.state.direction == 'n'){
-      const rotatedPointBottomRight = this.rotatePoint(top, left,width, height, deg+rotation, 'bottom-right')
+    if(this.state.direction === 'n'){
+      const rotatedPointBottomRight = this.rotatePoint(top, left,width, height, deg, 'bottom-right')
       const newPos = this.newPositionAfterResize(
         rotatedPointBottomRight,
         newWidth,
         newHeight,
-        deg+rotation,
+        deg,
         'bottom-right'
       )
       // console.log(newPos)
@@ -369,12 +383,12 @@ class App extends React.Component{
         left: newPos.left ? newPos.left : endLeft
       })
     }else{
-      const rotatedPointTopRight = this.rotatePoint(top, left,width, height, deg+rotation, 'top-right')
+      const rotatedPointTopRight = this.rotatePoint(top, left,width, height, deg, 'top-right')
       const newPos = this.newPositionAfterResize(
         rotatedPointTopRight,
         newWidth,
         newHeight,
-        deg+rotation,
+        deg,
         'top-right'
       )
       // console.log(newPos)
@@ -498,4 +512,4 @@ class App extends React.Component{
     )
   }
 }
-export default App
+export default RotateResize
