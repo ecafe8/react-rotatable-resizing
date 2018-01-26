@@ -1,7 +1,7 @@
 {
   "name": "react-rotate-resize-drag",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "create-react-app": "^1.5.1",
     "eslint": "^4.16.0",
