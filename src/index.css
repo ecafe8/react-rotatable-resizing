@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+.main{
+  border-radius: 3px;
+  box-shadow: 0px 0px 5px rgb(175, 175, 175);
+  position: absolute;
+}
+.handler {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1px solid red;
+}
+.w {
+  top: 50%;
+  margin-top: -3px;
+  left: -3px;
+  cursor: ew-resize;
+}
+.e {
+  top: 50%;
+  margin-top: -3px;
+  right: -3px;
+  cursor: ew-resize;
+}
+.n {
+  top: -3px;
+  margin-left: -3px;
+  left: 50%;
+  cursor: ns-resize;
+}
+.s {
+  bottom: -3px;
+  margin-left: -3px;
+  left: 50%;
+  cursor: ns-resize;
+}
+.nw {
+  top: -3px;
+  left: -3px;
+  cursor: nwse-resize;
+}
+.ne {
+  top: -3px;
+  right: -3px;
+  cursor: nesw-resize;
+}
+.sw {
+  bottom: -3px;
+  left: -3px;
+  cursor: nesw-resize;
+}
+.se {
+  bottom: -3px;
+  right: -3px;
+  cursor: nwse-resize;
+}
+
+.rotateHandler{
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border: 1px solid blue;
+  z-index: -1;
+}
+.rnw {
+  top: -45px;
+  left: -45px;
+  cursor: pointer;
+}
+.rne {
+  top: -45px;
+  right: -45px;
+  cursor: pointer;
+  background-color: navy;
+}
+.rsw {
+  bottom: -45px;
+  left: -45px;
+  cursor: pointer;
+}
+.rse {
+  bottom: -45px;
+  right: -45px;
+  cursor: pointer;
+}
