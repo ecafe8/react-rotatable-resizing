@@ -216,7 +216,7 @@ class RotateResize extends React.Component {
     let newHeight
     let newWidth
     if (deg > 360) {
-      deg = deg - parseInt(deg / 360) * 360
+      deg = deg - parseInt(deg / 360, 100) * 360
     }
     if (deg > 270 || (Math.abs(deg - 270) < 30 && deg > 0)) {
       deg = deg - 360
@@ -296,7 +296,7 @@ class RotateResize extends React.Component {
     let newHeight
     let newWidth
     if (deg > 360) {
-      deg = deg - parseInt(deg / 360) * 360
+      deg = deg - parseInt(deg / 360, 10) * 360
     }
     if (deg > 270 || (Math.abs(deg - 270) < 30 && deg > 0)) {
       deg = deg - 360
@@ -457,7 +457,7 @@ class RotateResize extends React.Component {
             <div
               key={direction}
               id={'r' + direction}
-              className={'rotateHandler ' + 'r' + direction}
+              className={'rotateHandler r' + direction}
               ref={'r' + direction}
               onMouseDown={this._startDrag}
             />
