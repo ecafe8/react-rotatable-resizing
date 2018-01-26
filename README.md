@@ -1,2 +1,2 @@
 # react-rotatable-resizing
-###now fully usable
+### now fully usable
