@@ -75,7 +75,6 @@ body {
   top: -45px;
   right: -45px;
   cursor: pointer;
-  background-color: navy;
 }
 .rsw {
   bottom: -45px;
@@ -86,4 +85,5 @@ body {
   bottom: -45px;
   right: -45px;
   cursor: pointer;
+  background-color: navy;
 }
