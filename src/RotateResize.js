@@ -6,8 +6,8 @@ class RotateResize extends React.Component {
       mouseHeldDown: false,
       width: 300,
       height: 300,
-      minWidth: 50,
-      minHeight: 50,
+      minWidth: 20,
+      minHeight: 20,
       maxWidth: 1000,
       maxHeight: 1000,
       top: 200,
@@ -20,24 +20,28 @@ class RotateResize extends React.Component {
       rDirection: '',
       step: 1,
       rotation: 0,
-      center: {}
+      center: {},
+      stopLeft: false,
+      stopTop: false,
+      prevLeft: 0,
+      prevTop: 0
     }
   }
 
   componentDidMount() {
-    let _this = this
     document.addEventListener('mousemove', e => {
-      if (_this.state.direction !== '' && _this.state.rDirection === '') {
-        _this._startResize(e)
-      } else if (_this.state.direction === '' && _this.state.rDirection !== '') {
-        _this._startRotate(e)
+      const { direction, rDirection } = this.state
+      if (direction !== '' && rDirection === '') {
+        this._startResize(e)
+      } else if (direction === '' && rDirection !== '') {
+        this._startRotate(e)
       }
     })
     document.addEventListener('mouseup', e => {
-      _this._stopDrag(e)
+      this._stopDrag(e)
     })
     document.addEventListener('mouseleave', e => {
-      _this._stopDrag(e)
+      this._stopDrag(e)
     })
   }
 
@@ -77,9 +81,27 @@ class RotateResize extends React.Component {
   }
 
   _startResize = e => {
-    const { mouseHeldDown, direction } = this.state
+    const { mouseHeldDown, direction, minWidth, minHeight, width, height, left, top } = this.state
     let canWidthChange = true
     let canHeightChange = true
+    if (width <= minWidth) {
+      this.setState({
+        stopLeft: true
+      })
+    } else {
+      this.setState({
+        stopLeft: false
+      })
+    }
+    if (height <= minHeight) {
+      this.setState({
+        stopTop: true
+      })
+    } else {
+      this.setState({
+        stopTop: false
+      })
+    }
     if (mouseHeldDown) {
       switch (direction) {
         case 'e':
@@ -129,8 +151,6 @@ class RotateResize extends React.Component {
 
   _stopDrag = e => {
     const { rDirection, deg, rotation } = this.state
-    // let degString = document.querySelector(".main").style.transform
-    // let degNum = parseFloat(degString.replace(/^[0-9]|[a-z]|(\()|(\))/ig,""))
     if (rDirection !== '') {
       this.setState({
         mouseHeldDown: false,
@@ -205,24 +225,10 @@ class RotateResize extends React.Component {
   }
 
   resizeES = (canWidthChange, canHeightChange, e) => {
-    const {
-      direction,
-      top,
-      left,
-      width,
-      height,
-      originalX,
-      originalY,
-      minWidth,
-      minHeight,
-      maxWidth,
-      maxHeight
-    } = this.state
+    const { direction, top, left, width, height, originalX, originalY } = this.state
     let { deg } = this.state
     const distanceX = e.clientX - originalX
     const distanceY = e.clientY - originalY
-    // const delta = (deg) * Math.PI/180
-    // console.log(Math.sin(delta),Math.cos(delta))
     const initialBoxWidth = width
     const initialBoxHeight = height
     let newHeight
@@ -240,27 +246,18 @@ class RotateResize extends React.Component {
       let distanceY0 = distanceY * Math.cos(deg) - distanceX * Math.sin(deg)
       newHeight = initialBoxHeight + distanceY0
       newWidth = initialBoxWidth + distanceX0
-      if (newWidth <= minWidth || newHeight <= minHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
-      if (newWidth >= maxWidth || newHeight >= maxHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
       newHeight = canHeightChange ? newHeight : initialBoxHeight
       newWidth = canWidthChange ? newWidth : initialBoxWidth
       deg = deg * 180 / Math.PI
       const rotatedPointTopLeft = this.rotatePoint(top, left, width, height, deg, 'top-left')
       const newPos = this.newPositionAfterResize(rotatedPointTopLeft, newWidth, newHeight, deg, 'top-left')
-      // console.log(newPos)
       this.setState({
         width: newWidth,
         height: newHeight,
+        top: newPos.top,
+        left: newPos.left,
         originalX: e.clientX,
-        originalY: e.clientY,
-        top: newPos.top ? newPos.top : top,
-        left: newPos.left ? newPos.left : left
+        originalY: e.clientY
       })
     } else {
       deg = deg * Math.PI / 180
@@ -268,14 +265,6 @@ class RotateResize extends React.Component {
       let distanceY0 = distanceY * Math.cos(deg) + distanceX * Math.sin(deg)
       newHeight = initialBoxHeight + distanceY0
       newWidth = initialBoxWidth + distanceX0
-      if (newWidth <= minWidth || newHeight <= minHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
-      if (newWidth >= maxWidth || newHeight >= maxHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
       newHeight = canHeightChange ? newHeight : initialBoxHeight
       newWidth = canWidthChange ? newWidth : initialBoxWidth
       deg = deg * 180 / Math.PI
@@ -284,35 +273,21 @@ class RotateResize extends React.Component {
       this.setState({
         width: newWidth,
         height: newHeight,
+        top: newPos.top,
+        left: newPos.left,
         originalX: e.clientX,
-        originalY: e.clientY,
-        top: newPos.top ? newPos.top : top,
-        left: newPos.left ? newPos.left : left
+        originalY: e.clientY
       })
     }
   }
 
   resizeWN = (canWidthChange, canHeightChange, e) => {
-    const {
-      originalX,
-      originalY,
-      width,
-      height,
-      top,
-      left,
-      direction,
-      minWidth,
-      minHeight,
-      maxWidth,
-      maxHeight
-    } = this.state
+    const { originalX, originalY, width, height, top, left, direction } = this.state
     let { deg } = this.state
     const distanceX = originalX - e.clientX
     const distanceY = originalY - e.clientY
     const initialBoxWidth = width
     const initialBoxHeight = height
-    const endTop = canHeightChange ? top - distanceY : top
-    const endLeft = canWidthChange ? left - distanceX : left
     let newHeight
     let newWidth
     if (deg > 360) {
@@ -328,14 +303,6 @@ class RotateResize extends React.Component {
       let distanceY0 = distanceY * Math.cos(deg) - distanceX * Math.sin(deg)
       newHeight = initialBoxHeight + distanceY0
       newWidth = initialBoxWidth + distanceX0
-      if (newWidth <= minWidth || newHeight <= minHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
-      if (newWidth >= maxWidth || newHeight >= maxHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
       newHeight = canHeightChange ? newHeight : initialBoxHeight
       newWidth = canWidthChange ? newWidth : initialBoxWidth
       deg = deg * 180 / Math.PI
@@ -345,10 +312,10 @@ class RotateResize extends React.Component {
       this.setState({
         width: newWidth,
         height: newHeight,
+        top: newPos.top,
+        left: newPos.left,
         originalX: e.clientX,
-        originalY: e.clientY,
-        top: newPos.top ? newPos.top : endTop,
-        left: newPos.left ? newPos.left : endLeft
+        originalY: e.clientY
       })
     } else {
       deg = deg * Math.PI / 180
@@ -356,33 +323,24 @@ class RotateResize extends React.Component {
       let distanceY0 = distanceY * Math.cos(deg) + distanceX * Math.sin(deg)
       newHeight = initialBoxHeight + distanceY0
       newWidth = initialBoxWidth + distanceX0
-      if (newWidth <= minWidth || newHeight <= minHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
-      if (newWidth >= maxWidth || newHeight >= maxHeight) {
-        canWidthChange = false
-        canHeightChange = false
-      }
       newHeight = canHeightChange ? newHeight : initialBoxHeight
       newWidth = canWidthChange ? newWidth : initialBoxWidth
       deg = deg * 180 / Math.PI
       const rotatedPointTopRight = this.rotatePoint(top, left, width, height, deg, 'top-right')
       const newPos = this.newPositionAfterResize(rotatedPointTopRight, newWidth, newHeight, deg, 'top-right')
-      // console.log(newPos)
       this.setState({
         width: newWidth,
         height: newHeight,
+        top: newPos.top,
+        left: newPos.left,
         originalX: e.clientX,
-        originalY: e.clientY,
-        top: newPos.top ? newPos.top : endTop,
-        left: newPos.left ? newPos.left : endLeft
+        originalY: e.clientY
       })
     }
   }
 
   resizeSW = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, left, top, minWidth, minHeight, maxWidth, maxHeight } = this.state
+    const { originalX, originalY, width, height, left, top } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -401,14 +359,6 @@ class RotateResize extends React.Component {
     let newHeight
     newWidth = initialBoxWidth + distanceX0
     newHeight = initialBoxHeight + distanceY0
-    if (newWidth <= minWidth || newHeight <= minHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
-    if (newWidth >= maxWidth || newHeight >= maxHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
     newHeight = canHeightChange ? newHeight : initialBoxHeight
     newWidth = canWidthChange ? newWidth : initialBoxWidth
     deg = deg * 180 / Math.PI
@@ -423,9 +373,8 @@ class RotateResize extends React.Component {
       originalY: e.clientY
     })
   }
-
   resizeNE = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, minWidth, minHeight, maxWidth, maxHeight } = this.state
+    const { originalX, originalY, width, height, top, left, stopTop, stopLeft } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -434,7 +383,6 @@ class RotateResize extends React.Component {
       deg = deg + parseInt(Math.abs(deg) / 360, 10) * 360
     }
     deg = deg * Math.PI / 180
-    // console.log(deg)
     let distanceX = e.clientX - originalX
     let distanceY = originalY - e.clientY
     let distanceX0 = distanceX * Math.cos(deg) - distanceY * Math.sin(deg)
@@ -445,14 +393,6 @@ class RotateResize extends React.Component {
     let newHeight
     newWidth = initialBoxWidth + distanceX0
     newHeight = initialBoxHeight + distanceY0
-    if (newWidth <= minWidth || newHeight <= minHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
-    if (newWidth >= maxWidth || newHeight >= maxHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
     newHeight = canHeightChange ? newHeight : initialBoxHeight
     newWidth = canWidthChange ? newWidth : initialBoxWidth
     deg = deg * 180 / Math.PI
@@ -469,7 +409,7 @@ class RotateResize extends React.Component {
   }
 
   resizeNW = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, minWidth, minHeight, maxWidth, maxHeight } = this.state
+    const { originalX, originalY, width, height, top, left } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -488,14 +428,6 @@ class RotateResize extends React.Component {
     let newHeight
     newWidth = initialBoxWidth + distanceX0
     newHeight = initialBoxHeight + distanceY0
-    if (newWidth <= minWidth || newHeight <= minHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
-    if (newWidth >= maxWidth || newHeight >= maxHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
     newHeight = canHeightChange ? newHeight : initialBoxHeight
     newWidth = canWidthChange ? newWidth : initialBoxWidth
     deg = deg * 180 / Math.PI
@@ -512,7 +444,7 @@ class RotateResize extends React.Component {
   }
 
   resizeSE = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, minWidth, minHeight, maxWidth, maxHeight } = this.state
+    const { originalX, originalY, width, height, top, left } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -531,14 +463,6 @@ class RotateResize extends React.Component {
     let newHeight
     newWidth = initialBoxWidth + distanceX0
     newHeight = initialBoxHeight + distanceY0
-    if (newWidth <= minWidth || newHeight <= minHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
-    if (newWidth >= maxWidth || newHeight >= maxHeight) {
-      canWidthChange = false
-      canHeightChange = false
-    }
     newHeight = canHeightChange ? newHeight : initialBoxHeight
     newWidth = canWidthChange ? newWidth : initialBoxWidth
     deg = deg * 180 / Math.PI
@@ -568,14 +492,19 @@ class RotateResize extends React.Component {
     const thisY = e.clientY - center.y
     const degree = R2D * Math.atan2(thisY, thisX)
     const rotation = degree - startAngle
-    // console.log(rotation)
     this.setState({
       rotation
     })
   }
-
+  // shouldComponentUpdate(nextProps, nextState) {
+  //   if (nextState.width <= this.state.minWidth) {
+  //     return false
+  //   }
+  // }
   render() {
-    const { width, height, top, left, deg, rotation } = this.state
+    let { width, height, top, left, deg, rotation, minWidth, minHeight } = this.state
+    width = width > minWidth ? width : minWidth
+    height = height > minHeight ? height : minHeight
     const styleObject = {
       width: width + 'px',
       height: height + 'px',
@@ -593,6 +522,7 @@ class RotateResize extends React.Component {
               className={'handler ' + direction}
               onMouseDown={this._startDrag}
               ref={direction}
+              style={{ cursor: direction + '-resize' }}
             />
           )
         })}
