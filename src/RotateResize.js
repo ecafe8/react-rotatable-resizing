@@ -4,22 +4,21 @@ class RotateResize extends React.Component {
     super(props)
     this.state = {
       mouseHeldDown: false,
-      width: 300,
-      height: 300,
-      minWidth: 20,
-      minHeight: 20,
-      maxWidth: 1000,
-      maxHeight: 1000,
-      top: 200,
-      left: 300,
+      width: this.props.Options.width,
+      height: this.props.Options.height,
+      minWidth: this.props.Options.minWidth,
+      minHeight: this.props.Options.minHeight,
+      top: this.props.Options.top,
+      left: this.props.Options.left,
       startAngle: 0,
-      deg: 0,
+      deg: this.props.Options.deg,
       originalX: 0,
       originalY: 0,
       direction: '',
       rDirection: '',
       rotation: 0,
-      center: {}
+      center: {},
+      stepChange: {}
     }
   }
 
@@ -38,6 +37,10 @@ class RotateResize extends React.Component {
     document.addEventListener('mouseleave', e => {
       this._stopDrag(e)
     })
+  }
+
+  handleEachChange = val => {
+    this.props.onEachStep(val)
   }
 
   _startDrag = e => {
@@ -202,7 +205,7 @@ class RotateResize extends React.Component {
   }
 
   resizeES = (canWidthChange, canHeightChange, e) => {
-    const { direction, top, left, width, height, originalX, originalY } = this.state
+    const { originalX, originalY, top, left, width, height, direction } = this.state
     let { deg } = this.state
     const distanceX = e.clientX - originalX
     const distanceY = e.clientY - originalY
@@ -256,10 +259,25 @@ class RotateResize extends React.Component {
         originalY: e.clientY
       })
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   resizeWN = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, direction } = this.state
+    const { originalX, originalY, top, left, width, height, minWidth, minHeight, direction } = this.state
     let { deg } = this.state
     const distanceX = originalX - e.clientX
     const distanceY = originalY - e.clientY
@@ -314,10 +332,26 @@ class RotateResize extends React.Component {
         originalY: e.clientY
       })
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   resizeSW = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, left, top, minWidth, minHeight } = this.state
+    const { originalX, originalY, top, left, width, height, minWidth, minHeight } = this.state
+    console.log(width)
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -409,10 +443,25 @@ class RotateResize extends React.Component {
         originalY: e.clientY
       })
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   resizeNE = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, minWidth, minHeight } = this.state
+    const { originalX, originalY, top, left, width, height, minWidth, minHeight } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -503,10 +552,25 @@ class RotateResize extends React.Component {
         originalY: e.clientY
       })
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   resizeNW = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, minWidth, minHeight } = this.state
+    const { originalX, originalY, top, left, width, height, minWidth, minHeight } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -605,10 +669,25 @@ class RotateResize extends React.Component {
         originalY: e.clientY
       })
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   resizeSE = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, width, height, top, left, minWidth, minHeight } = this.state
+    const { originalX, originalY, top, left, width, height, minWidth, minHeight } = this.state
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -700,6 +779,21 @@ class RotateResize extends React.Component {
         originalY: e.clientY
       })
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   _startRotate = e => {
@@ -707,6 +801,21 @@ class RotateResize extends React.Component {
     if (mouseHeldDown && rDirection !== '') {
       this.rotate(e)
     }
+    const stepChange = {
+      width: this.state.width,
+      height: this.state.height,
+      deg: this.state.deg + this.state.rotation,
+      top: this.state.top,
+      left: this.state.left
+    }
+    this.setState(
+      {
+        stepChange
+      },
+      () => {
+        this.handleEachChange(this.state.stepChange)
+      }
+    )
   }
 
   rotate = e => {
@@ -722,9 +831,10 @@ class RotateResize extends React.Component {
   }
 
   render() {
-    let { width, height, top, left, deg, rotation, minWidth, minHeight } = this.state
-    width = width > minWidth ? width : minWidth
-    height = height > minHeight ? height : minHeight
+    let { width, height, top, left, minWidth, minHeight } = this.props.Options
+    let { deg, rotation } = this.state
+    // width = width > minWidth ? width : minWidth
+    // height = height > minHeight ? height : minHeight
 
     const styleObject = {
       width: width + 'px',
