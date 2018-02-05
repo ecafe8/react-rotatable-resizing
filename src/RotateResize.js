@@ -205,7 +205,7 @@ class RotateResize extends React.Component {
   }
 
   resizeES = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, top, left, width, height, direction } = this.state
+    const { originalX, originalY, top, left, width, height, direction, minWidth, minHeight } = this.state
     let { deg } = this.state
     const distanceX = e.clientX - originalX
     const distanceY = e.clientY - originalY
@@ -231,14 +231,73 @@ class RotateResize extends React.Component {
       deg = deg * 180 / Math.PI
       const rotatedPointTopLeft = this.rotatePoint(top, left, width, height, deg, 'top-left')
       const newPos = this.newPositionAfterResize(rotatedPointTopLeft, newWidth, newHeight, deg, 'top-left')
-      this.setState({
-        width: newWidth,
-        height: newHeight,
-        top: newPos.top,
-        left: newPos.left,
-        originalX: e.clientX,
-        originalY: e.clientY
-      })
+
+      const minWidthRotatedPointTopLeft = this.rotatePoint(top, left, minWidth, height, deg, 'top-left')
+      const newPosMinWidth = this.newPositionAfterResize(
+        minWidthRotatedPointTopLeft,
+        minWidth,
+        newHeight,
+        deg,
+        'top-left'
+      )
+
+      const minHeightRotatedPointTopLeft = this.rotatePoint(top, left, width, minHeight, deg, 'top-left')
+      const newPosMinHeight = this.newPositionAfterResize(
+        minHeightRotatedPointTopLeft,
+        newWidth,
+        minHeight,
+        deg,
+        'top-left'
+      )
+
+      const minWidthMinHeightRotatedPointTopLeft = this.rotatePoint(top, left, minWidth, minHeight, deg, 'top-left')
+      const newPosMinWidthMinHeight = this.newPositionAfterResize(
+        minWidthMinHeightRotatedPointTopLeft,
+        minWidth,
+        minHeight,
+        deg,
+        'top-left'
+      )
+      if (newWidth > minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPos.top,
+          left: newPos.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newWidth <= minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPosMinWidth.top,
+          left: newPosMinWidth.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth > minWidth) {
+        this.setState({
+          top: newPosMinHeight.top,
+          left: newPosMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth <= minWidth) {
+        this.setState({
+          top: newPosMinWidthMinHeight.top,
+          left: newPosMinWidthMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
     } else {
       deg = deg * Math.PI / 180
       let distanceX0 = distanceX * Math.cos(deg) + distanceY * Math.sin(deg)
@@ -250,21 +309,89 @@ class RotateResize extends React.Component {
       deg = deg * 180 / Math.PI
       const rotatedPointBottomLeft = this.rotatePoint(top, left, width, height, deg, 'bottom-left')
       const newPos = this.newPositionAfterResize(rotatedPointBottomLeft, newWidth, newHeight, deg, 'bottom-left')
-      this.setState({
-        width: newWidth,
-        height: newHeight,
-        top: newPos.top,
-        left: newPos.left,
-        originalX: e.clientX,
-        originalY: e.clientY
-      })
+
+      const minWidthRotatedPointBottomLeft = this.rotatePoint(top, left, minWidth, height, deg, 'bottom-left')
+      const newPosMinWidth = this.newPositionAfterResize(
+        minWidthRotatedPointBottomLeft,
+        minWidth,
+        newHeight,
+        deg,
+        'bottom-left'
+      )
+
+      const minHeightRotatedPointBottomLeft = this.rotatePoint(top, left, width, minHeight, deg, 'bottom-left')
+      const newPosMinHeight = this.newPositionAfterResize(
+        minHeightRotatedPointBottomLeft,
+        newWidth,
+        minHeight,
+        deg,
+        'bottom-left'
+      )
+
+      const minWidthMinHeightRotatedPointBottomLeft = this.rotatePoint(
+        top,
+        left,
+        minWidth,
+        minHeight,
+        deg,
+        'bottom-left'
+      )
+      const newPosMinWidthMinHeight = this.newPositionAfterResize(
+        minWidthMinHeightRotatedPointBottomLeft,
+        minWidth,
+        minHeight,
+        deg,
+        'bottom-left'
+      )
+      if (newWidth > minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPos.top,
+          left: newPos.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newWidth <= minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPosMinWidth.top,
+          left: newPosMinWidth.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth > minWidth) {
+        this.setState({
+          top: newPosMinHeight.top,
+          left: newPosMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth <= minWidth) {
+        this.setState({
+          top: newPosMinWidthMinHeight.top,
+          left: newPosMinWidthMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
     }
     const stepChange = {
       width: this.state.width,
       height: this.state.height,
       deg: this.state.deg + this.state.rotation,
       top: this.state.top,
-      left: this.state.left
+      left: this.state.left,
+      minWidth,
+      minHeight
     }
     this.setState(
       {
@@ -277,7 +404,7 @@ class RotateResize extends React.Component {
   }
 
   resizeWN = (canWidthChange, canHeightChange, e) => {
-    const { originalX, originalY, top, left, width, height, minWidth, minHeight, direction } = this.state
+    const { originalX, originalY, top, left, width, height, direction, minWidth, minHeight } = this.state
     let { deg } = this.state
     const distanceX = originalX - e.clientX
     const distanceY = originalY - e.clientY
@@ -303,15 +430,80 @@ class RotateResize extends React.Component {
       deg = deg * 180 / Math.PI
       const rotatedPointBottomRight = this.rotatePoint(top, left, width, height, deg, 'bottom-right')
       const newPos = this.newPositionAfterResize(rotatedPointBottomRight, newWidth, newHeight, deg, 'bottom-right')
-      // console.log(newPos)
-      this.setState({
-        width: newWidth,
-        height: newHeight,
-        top: newPos.top,
-        left: newPos.left,
-        originalX: e.clientX,
-        originalY: e.clientY
-      })
+
+      const minWidthRotatedPointBottomRight = this.rotatePoint(top, left, minWidth, height, deg, 'bottom-right')
+      const newPosMinWidth = this.newPositionAfterResize(
+        minWidthRotatedPointBottomRight,
+        minWidth,
+        newHeight,
+        deg,
+        'bottom-right'
+      )
+
+      const minHeightRotatedPointBottomRight = this.rotatePoint(top, left, width, minHeight, deg, 'bottom-right')
+      const newPosMinHeight = this.newPositionAfterResize(
+        minHeightRotatedPointBottomRight,
+        newWidth,
+        minHeight,
+        deg,
+        'bottom-right'
+      )
+
+      const minWidthMinHeightRotatedPointBottomRight = this.rotatePoint(
+        top,
+        left,
+        minWidth,
+        minHeight,
+        deg,
+        'bottom-right'
+      )
+      const newPosMinWidthMinHeight = this.newPositionAfterResize(
+        minWidthMinHeightRotatedPointBottomRight,
+        minWidth,
+        minHeight,
+        deg,
+        'bottom-right'
+      )
+      if (newWidth > minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPos.top,
+          left: newPos.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newWidth <= minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPosMinWidth.top,
+          left: newPosMinWidth.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth > minWidth) {
+        this.setState({
+          top: newPosMinHeight.top,
+          left: newPosMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth <= minWidth) {
+        this.setState({
+          top: newPosMinWidthMinHeight.top,
+          left: newPosMinWidthMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
     } else {
       deg = deg * Math.PI / 180
       let distanceX0 = distanceX * Math.cos(deg) + distanceY * Math.sin(deg)
@@ -323,21 +515,82 @@ class RotateResize extends React.Component {
       deg = deg * 180 / Math.PI
       const rotatedPointTopRight = this.rotatePoint(top, left, width, height, deg, 'top-right')
       const newPos = this.newPositionAfterResize(rotatedPointTopRight, newWidth, newHeight, deg, 'top-right')
-      this.setState({
-        width: newWidth,
-        height: newHeight,
-        top: newPos.top,
-        left: newPos.left,
-        originalX: e.clientX,
-        originalY: e.clientY
-      })
+
+      const minWidthRotatedPointTopRight = this.rotatePoint(top, left, minWidth, height, deg, 'top-right')
+      const newPosMinWidth = this.newPositionAfterResize(
+        minWidthRotatedPointTopRight,
+        minWidth,
+        newHeight,
+        deg,
+        'top-right'
+      )
+
+      const minHeightRotatedPointTopRight = this.rotatePoint(top, left, width, minHeight, deg, 'top-right')
+      const newPosMinHeight = this.newPositionAfterResize(
+        minHeightRotatedPointTopRight,
+        newWidth,
+        minHeight,
+        deg,
+        'top-right'
+      )
+
+      const minWidthMinHeightRotatedPointTopRight = this.rotatePoint(top, left, minWidth, minHeight, deg, 'top-right')
+      const newPosMinWidthMinHeight = this.newPositionAfterResize(
+        minWidthMinHeightRotatedPointTopRight,
+        minWidth,
+        minHeight,
+        deg,
+        'top-right'
+      )
+      if (newWidth > minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPos.top,
+          left: newPos.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newWidth <= minWidth && newHeight > minHeight) {
+        this.setState({
+          top: newPosMinWidth.top,
+          left: newPosMinWidth.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth > minWidth) {
+        this.setState({
+          top: newPosMinHeight.top,
+          left: newPosMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
+      if (newHeight <= minHeight && newWidth <= minWidth) {
+        this.setState({
+          top: newPosMinWidthMinHeight.top,
+          left: newPosMinWidthMinHeight.left,
+          width: newWidth,
+          height: newHeight,
+          originalX: e.clientX,
+          originalY: e.clientY
+        })
+      }
     }
     const stepChange = {
       width: this.state.width,
       height: this.state.height,
       deg: this.state.deg + this.state.rotation,
       top: this.state.top,
-      left: this.state.left
+      left: this.state.left,
+      minWidth,
+      minHeight
     }
     this.setState(
       {
@@ -351,7 +604,6 @@ class RotateResize extends React.Component {
 
   resizeSW = (canWidthChange, canHeightChange, e) => {
     const { originalX, originalY, top, left, width, height, minWidth, minHeight } = this.state
-    console.log(width)
     let { deg } = this.state
     if (deg > 360) {
       deg = deg - parseInt(deg / 360, 10) * 360
@@ -448,7 +700,9 @@ class RotateResize extends React.Component {
       height: this.state.height,
       deg: this.state.deg + this.state.rotation,
       top: this.state.top,
-      left: this.state.left
+      left: this.state.left,
+      minWidth,
+      minHeight
     }
     this.setState(
       {
@@ -557,7 +811,9 @@ class RotateResize extends React.Component {
       height: this.state.height,
       deg: this.state.deg + this.state.rotation,
       top: this.state.top,
-      left: this.state.left
+      left: this.state.left,
+      minWidth,
+      minHeight
     }
     this.setState(
       {
@@ -674,7 +930,9 @@ class RotateResize extends React.Component {
       height: this.state.height,
       deg: this.state.deg + this.state.rotation,
       top: this.state.top,
-      left: this.state.left
+      left: this.state.left,
+      minWidth,
+      minHeight
     }
     this.setState(
       {
@@ -784,7 +1042,9 @@ class RotateResize extends React.Component {
       height: this.state.height,
       deg: this.state.deg + this.state.rotation,
       top: this.state.top,
-      left: this.state.left
+      left: this.state.left,
+      minWidth,
+      minHeight
     }
     this.setState(
       {
@@ -833,8 +1093,8 @@ class RotateResize extends React.Component {
   render() {
     let { width, height, top, left, minWidth, minHeight } = this.props.Options
     let { deg, rotation } = this.state
-    // width = width > minWidth ? width : minWidth
-    // height = height > minHeight ? height : minHeight
+    width = width > minWidth ? width : minWidth
+    height = height > minHeight ? height : minHeight
 
     const styleObject = {
       width: width + 'px',

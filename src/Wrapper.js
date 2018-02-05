@@ -1,24 +1,22 @@
 import React from 'react'
 import RotateResize from './RotateResize'
-const options = {
-  width: 30,
-  height: 300,
-  top: 20,
-  left: 200,
-  minWidth: 20,
-  minHeight: 20,
-  deg: -70
-}
 export default class Wrapper extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      options
+      options: {
+        width: 300,
+        height: 300,
+        top: 200,
+        left: 200,
+        minWidth: 20,
+        minHeight: 20,
+        deg: 0
+      }
     }
   }
 
   handleEachChange = nextOptions => {
-    console.log(nextOptions)
     this.setState({
       options: nextOptions
     })
