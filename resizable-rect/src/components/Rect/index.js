@@ -33,9 +33,7 @@ export default class Rect extends PureComponent {
 	// Rotate
 	startRotate = (e) => {
 		const { clientX, clientY } = e
-		const { styles: { position: { centerX, centerY }, size: { width, height }, transform: { rotateAngle } } } = this.props
-		const left = centerX - width / 2
-		const top = centerY - height / 2
+		const { styles: { position: { centerX, centerY } } } = this.props
 		
 		var startVector = {
 			x: clientX - centerX,

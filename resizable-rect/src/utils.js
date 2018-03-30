@@ -5,115 +5,83 @@ export const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 } ) => {
   return Math.atan(tan) * 180 / Math.PI
 }
 
-export const degToRadian = (deg) => {
-	return deg * Math.PI / 180
-}
+export const degToRadian = (deg) => deg * Math.PI / 180
+
+const cos = (deg) => Math.cos(degToRadian(deg))
+const sin = (deg) => Math.sin(degToRadian(deg))
 
 
 export const getNewStyle = (type, rect, deltaW, deltaH) => {
-	const { width, height, centerX, centerY, rotateAngle } = rect
+	let { width, height, centerX, centerY, rotateAngle } = rect
 	switch (type) {
 		case 'r': {
-			return {
-				position: {
-					centerX: centerX + deltaW / 2 * Math.cos(degToRadian(rotateAngle)),
-					centerY: centerY + deltaW / 2 * Math.sin(degToRadian(rotateAngle))
-				},
-				size: {
-					height,
-					width: width + deltaW
-				}
-			}
+			centerX += deltaW / 2 * cos(rotateAngle)
+			centerY += deltaW / 2 * sin(rotateAngle)
+			width += deltaW
+			break
 		}
 		case 'tr': {
 			deltaH = -deltaH
-			return {
-				position: {
-					centerX: centerX + deltaW / 2 * Math.cos(degToRadian(rotateAngle)) + deltaH / 2 * Math.sin(degToRadian(rotateAngle)),
-					centerY: centerY + deltaW / 2 * Math.sin(degToRadian(rotateAngle)) - deltaH / 2 * Math.cos(degToRadian(rotateAngle))
-				},
-				size: {
-					height: height + deltaH,
-					width: width + deltaW
-				}
-			}
+			centerX += deltaW / 2 * cos(rotateAngle) + deltaH / 2 * sin(rotateAngle)
+			centerY += deltaW / 2 * sin(rotateAngle) - deltaH / 2 * cos(rotateAngle)
+			height += deltaH
+			width += deltaW
+			break
 		}
 		case 'br': {
-			return {
-				position: {
-					centerX: centerX + deltaW / 2 * Math.cos(degToRadian(rotateAngle)) - deltaH / 2 * Math.sin(degToRadian(rotateAngle)),
-					centerY: centerY + deltaH / 2 * Math.cos(degToRadian(rotateAngle)) + deltaW / 2 * Math.sin(degToRadian(rotateAngle))
-				},
-				size: {
-					height: height + deltaH,
-					width: width + deltaW
-				}
-			}
+			centerX += deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle)
+			centerY += deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle)
+			height += deltaH
+			width += deltaW
+			break
 		}
 		case 'b': {
-			return {
-				position: {
-					centerX: centerX - deltaH / 2 * Math.sin(degToRadian(rotateAngle)),
-					centerY: centerY + deltaH / 2 * Math.cos(degToRadian(rotateAngle))
-				},
-				size: {
-					height: height + deltaH,
-					width
-				}
-			}
+			centerX -= deltaH / 2 * sin(rotateAngle)
+			centerY += deltaH / 2 * cos(rotateAngle)
+			height +=deltaH
+			break
 		}
 		case 'bl': {
 			deltaW = -deltaW
-			return {
-				position: {
-					centerX: centerX - (deltaW / 2 * Math.cos(degToRadian(rotateAngle)) + deltaH / 2 * Math.sin(degToRadian(rotateAngle))),
-					centerY: centerY - (deltaW / 2 * Math.sin(degToRadian(rotateAngle)) - deltaH / 2 * Math.cos(degToRadian(rotateAngle)))
-				},
-				size: {
-					height: height + deltaH,
-					width: width + deltaW
-				}
-			}
+			centerX -= deltaW / 2 * cos(rotateAngle) + deltaH / 2 * sin(rotateAngle)
+			centerY -= deltaW / 2 * sin(rotateAngle) - deltaH / 2 * cos(rotateAngle)
+			height += deltaH
+			width += deltaW
+			break
 		}
 		case 'l': {
 			deltaW = -deltaW
-			return {
-				position: {
-					centerX: centerX - deltaW / 2 * Math.cos(degToRadian(rotateAngle)),
-					centerY: centerY - deltaW / 2 * Math.sin(degToRadian(rotateAngle))
-				},
-				size: {
-					height,
-					width: width + deltaW
-				}
-			}
+			centerX -= deltaW / 2 * cos(rotateAngle)
+			centerY -= deltaW / 2 * sin(rotateAngle)
+			width += deltaW
+			break
 		}
 		case 'tl': {
 			deltaW = -deltaW
 			deltaH = -deltaH
-			return {
-				position: {
-					centerX: centerX - (deltaW / 2 * Math.cos(degToRadian(rotateAngle)) - deltaH / 2 * Math.sin(degToRadian(rotateAngle))),
-					centerY: centerY - (deltaH / 2 * Math.cos(degToRadian(rotateAngle)) + deltaW / 2 * Math.sin(degToRadian(rotateAngle)))
-				},
-				size: {
-					height: height + deltaH,
-					width: width + deltaW
-				}
-			}
+			centerX -= deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle)
+			centerY -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle)
+			height += deltaH
+			width += deltaW
+			break
 		}
 		case 't': {
 			deltaH = -deltaH
-			return {
-				position: {
-					centerX: centerX + deltaH / 2 * Math.sin(degToRadian(rotateAngle)),
-					centerY: centerY - deltaH / 2 * Math.cos(degToRadian(rotateAngle))
-				},
-				size: {
-					height: height + deltaH,
-					width
-				}
+			centerX += deltaH / 2 * sin(rotateAngle)
+			centerY -= deltaH / 2 * cos(rotateAngle)
+			height +=deltaH
+			break
 			}
+		}
+
+	return {
+		position: {
+			centerX,
+			centerY
+		},
+		size: {
+			width,
+			height
 		}
 	}
 }

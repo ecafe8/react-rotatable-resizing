@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 import Rect from './components/Rect'
 import { getNewStyle, degToRadian } from './utils'
-import './App.css';
 
 class App extends Component {
   constructor() {
@@ -57,8 +56,8 @@ class App extends Component {
       <div className="App">
         <Rect styles={this.state} onPositionChange={this.handleMove} onAngleChange={this.handleRotate} onResize={this.handleResize} />
       </div>
-    );
+    )
   }
 }
 
-export default App;
+export default App
