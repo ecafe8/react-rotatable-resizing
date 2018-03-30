@@ -3,7 +3,6 @@ export const getLength = (x, y) => Math.sqrt(x * x + y * y)
 export const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 } ) => {
   const tan = ((y2 * x1 - y1 * x2) / (x1 * x2 + y1 * y2))
   return Math.atan(tan) * 180 / Math.PI
-  //return Math.acos(cos) * 180 / Math.PI
 }
 
 export const degToRadian = (deg) => {
