@@ -1,0 +1,48 @@
+.rect {
+	position: absolute;
+	border: 1px solid red;
+}
+
+.square {
+	position: absolute;
+	width: 10px;
+	height: 10px;
+	border: 1px solid blue;
+}
+
+.rotate {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border: 1px solid green;
+	background: green;
+	left: 50%;
+	top: -30px;
+	transform: translateX(-50%);
+}
+
+.t, .tl, .tr {
+	top: -4px;
+}
+
+.b, .bl, .br {
+	bottom: -4px;
+}
+
+.r, .tr, .br {
+	right: -4px;
+}
+
+.tl, .l, .bl {
+	left: -4px;
+} 
+
+.l, .r {
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.t, .b {
+	left: 50%;
+	transform: translateX(-50%);
+}
