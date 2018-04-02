@@ -23,10 +23,13 @@ export default class Rect extends PureComponent {
 			startX = clientX
 			startY = clientY
 		}
-		document.addEventListener('mousemove', onMove)
-		document.addEventListener('mouseup', () => {
+
+		const onUp = () => {
 			document.removeEventListener('mousemove', onMove)
-		})
+			document.removeEventListener('mouseup', onUp)
+		}
+		document.addEventListener('mousemove', onMove)
+		document.addEventListener('mouseup', onUp)
 	}
 
 
@@ -50,10 +53,12 @@ export default class Rect extends PureComponent {
 			this.props.onAngleChange(angle)
 			startVector = rotateVector
 		}	
-		document.addEventListener('mousemove', onMove)
-		document.addEventListener('mouseup', () => {
+		const onUp = () => {
 			document.removeEventListener('mousemove', onMove)
-		})
+			document.removeEventListener('mouseup', onUp)
+		}
+		document.addEventListener('mousemove', onMove)
+		document.addEventListener('mouseup', onUp)
 	}
 
 
@@ -73,10 +78,12 @@ export default class Rect extends PureComponent {
 			this.props.onResize(deltaL, alpha, rect, type)
 		}
 
-		document.addEventListener('mousemove', onMove)
-		document.addEventListener('mouseup', () => {
+		const onUp = () => {
 			document.removeEventListener('mousemove', onMove)
-		})
+			document.removeEventListener('mouseup', onUp)
+		}
+		document.addEventListener('mousemove', onMove)
+		document.addEventListener('mouseup', onUp)
 	}
 
 	render() {
