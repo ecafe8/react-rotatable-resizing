@@ -123,7 +123,7 @@ export const getNewStyle = (type, rect, deltaW, deltaH) => {
 			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH)
 			height = heightAndDeltaH.height
 			deltaH = heightAndDeltaH.deltaH
-			
+
 			centerX += deltaH / 2 * sin(rotateAngle)
 			centerY -= deltaH / 2 * cos(rotateAngle)
 			break
